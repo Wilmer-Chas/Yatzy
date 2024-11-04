@@ -6,16 +6,28 @@ typedef struct rule
     int points;
     bool crossed;
 } rule;
+
+class Player
+{
+    public:
+        string name;
+        int score;
+        bool combinationIsCrossed[16];
+};
+
 void bubbleSort(int arr[], int n);
-bool pairCheck(int input[]);
+void singleDigit(int input[], int requestedNumber, Player &player);
+void pairCheck(int input[], Player &player);
+void threeOfAKindCheck(int input[], Player &player);
+void fourOfAKindCheck(int input[], Player &player);
 int chance(int input[]);
 
 int main()
 {
+    Player player;    
     int exampleroll[5] = {3, 2, 3, 5, 4};
     bubbleSort(exampleroll, 5);
     // this should output 1 but instead outputs 0, other than that my code works
-    cout << pairCheck(exampleroll) << endl;
 
     for (int i = 0; i < 5; i++)
     {
@@ -25,34 +37,108 @@ int main()
             cout << ", ";
         }
     }
+    cout << endl;
+    cout << player.score << endl;
+    pairCheck(exampleroll, player);
+    cout << player.score << endl;
 
-    rule twoOfaKind = {0, 0};
-    if (pairCheck(exampleroll) == true)
-    {
-        twoOfaKind.crossed = true;
-        twoOfaKind.points = chance(exampleroll);
-    }
-    else
-    {
-        twoOfaKind.crossed = true;
-    }
-    cout << endl << twoOfaKind.crossed << twoOfaKind.points;
 }
 
 // yahtzee
 
-bool pairCheck(int input[])
+void singleDigit(int input[], int requestedNumber, Player &player)
 {
+    int count = 0;
+    if(player.combinationIsCrossed[requestedNumber - 1])
+    {
+        cout << "Combination already used. Please try something else." << endl;
+        return;
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        if (input[i] == requestedNumber)
+        {
+            player.score += input[i];
+            player.combinationIsCrossed[requestedNumber - 1] = true;
+            count++;
+        }
+    }
+    if (count == 0)
+    {
+        cout << "Crossing " << requestedNumber << "'s with 0 score." << endl;
+    }
+    player.combinationIsCrossed[requestedNumber - 1] = true;    
+    return;
+}
 
+void pairCheck(int input[], Player &player)
+{
+    int found = 0;
+    if(player.combinationIsCrossed[6])
+    {
+        cout << "Combination already used. Please try something else." << endl;
+        return;
+    }
     for (int i = 0; i < 5; i++)
     {
         if (input[i] == input[i - 1])
         {
-            return true;
+            player.score += input[i] * 2;
+            found++;
         }
     }
-    return false;
+    if(found == 0) cout << "Crossing pair with 0 score." << endl;
+    player.combinationIsCrossed[6] = true;
+    return;
 };
+
+void threeOfAKindCheck(int input[], Player &player)
+{
+    int found = 0;
+    if (player.combinationIsCrossed[6] == true)
+    {
+        cout << "Combination already used. Please try something else." << endl;
+        return;
+    }
+    
+    for (int i = 0; i < 5; i++)
+    {
+        if (input[i] == input[i - 1] && input[i] == input[i - 2])
+        {
+            player.score += input[i] * 3;
+            found++;
+        }
+    }
+    if (found == 0)
+        {
+            cout << "Crossing three of a kind with 0 score." << endl;
+        }
+    player.combinationIsCrossed[7] = true;
+    return;
+};
+
+void fourOfAKindCheck(int input[], Player &player)
+{
+    int found = 0;
+    if (player.combinationIsCrossed[7])
+    {
+        cout << "Combination already used. Please try something else." << endl;
+        return;
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        if (input[i] == input[i - 1] && input[i] == input[i - 2] && input[i] == input[i - 3])
+        {
+            player.score += input[i] * 4;
+        }
+    }
+    if (found == 0)
+    {
+        cout << "Crossing four of a kind with 0 score." << endl;
+    }
+    return;    
+}
+
 
 // implementation of a yatzee rule
 // this is a fucking atrocious implementation because
