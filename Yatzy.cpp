@@ -25,14 +25,15 @@ class Rules
 // rolls 5 die for random value between 1 to 6.
 void intDicerolling(int Dices[])
 {
-    srand(time(0)); // no idea what it does 
+    srand(time(0));
     for(int i = 0; i < 5; i++)
     {
         Dices[i] = rand() % 6 + 1;
-        cout << "the value is " << Dices[i] << "for dice"<< i << endl; // debug message;
+        cout << "the value is " << Dices[i] << "for dice"<< i << endl;
     }
     reroll(Dices);
 }
+// rerolls each die for random value between 1 to 6
 void reroll(int Dices[])
 {
     int requestedNumber;
@@ -48,16 +49,20 @@ void reroll(int Dices[])
     }
 }
 
+void initiliazeDices(int Dices[])
+{
+    for (int i = 0; i < 5; i++)
+    {
+        Dices[i] = 0;
+    }
+}
+
 int main()
 {
     int dices[5];
-    for (int i = 0; i > 5; i++)
-    {
-        dices[i] = 0;
-    }
+    initiliazeDices(dices);
     int arrNumSpelare[4];
     // number of rules;
-    Rules rules[13];
     intDicerolling(dices);
 
     return 0;
