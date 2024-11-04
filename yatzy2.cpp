@@ -1,11 +1,56 @@
 #include <iostream>
+#include <vector>
 using namespace std;
+
+enum RuleIndex
+{
+    // sum of all dices showing 1, score is sum
+    ONES, 
+    // sum of all dices showing 2, score is sum
+    TWOS,
+    // sum of all dices showing 3, score is sum
+    THREES,
+    // sum of all dices showing 4, score is sum
+    FOURS,
+    // sum of all dices showing 5, score is sum
+    FIVES,
+    // sum of all dices showing 6, score is sum
+    SIXES,
+    // two dices showing the same number, score is the sum of the two dices
+    ONE_OF_A_KIND,
+    // three dices showing the same number score is the sum of all the dices.
+    TWO_OF_A_KIND,
+    // fource dices showing the same number score is the sum of all the dices.
+    THREE_OF_A_KIND,
+    // fource dices showing the same number score is the sum of all the dices.
+    FOUR_OF_A_KIND,
+    // the combination of 1, 2, 3, 4 , 5, score is 15 (sum of all dices)
+    SMALL_STRAIGHT,
+    // the combination of 2, 3, 4, 5, 6. score is 20 (sum of all dices)
+    LARGE_STRAIGHT,
+    // any set of the three combined with a different pair. score is sum of all dices
+    FULLHOUSE,
+    // chance: any combination of the dices: score is the sum of all dices.
+    CHANCE,
+    // yatzy all five dices showing the same number, score is 50
+    YATZY
+};
 
 typedef struct rule
 {
     int points;
     bool crossed;
 } rule;
+
+struct Player
+{
+    vector<rule> rules;
+    Player() : rules(14, {0, false}) {};
+
+};
+
+
+
 void bubbleSort(int arr[], int n);
 void intDicerolling(int Dices[]);
 void initiliazeDices(int Dices[]);
@@ -15,13 +60,26 @@ int chance(int input[]);
 
 int main()
 {
+    int numPlayers;
+    cout << "how many players shall play today";
+    cin >> numPlayers;
     int dices[5];
-    initiliazeDices(dices);
-    int arrNumSpelare[4];
-    // number of rules;
-    intDicerolling(dices);
-    bubbleSort(dices, 5);
-    // this should output 1 but instead outputs 0, other than that my code works
+    vector<Player> players (numPlayers); // create an object containing the number of players
+    for (int turn = 0; turn < 13; turn++)
+    {
+        for(int i = 0; i < numPlayers; i++)
+        {
+            cout << "Player " << (i + 1) << "'s turn" << endl;
+            initiliazeDices(dices);
+            intDicerolling(dices);
+            bubbleSort(dices, 5);
+
+            evaluvateRules(players[i], dices); // evaluvates what rules are taken
+
+            // need a way to display scores
+        }
+    }
+    /*
     cout << pairCheck(dices) << endl;
 
     for (int i = 0; i < 5; i++)
@@ -32,8 +90,6 @@ int main()
             cout << ", ";
         }
     }
-
-    rule twoOfaKind = {0, 0};
     if (pairCheck(dices) == true)
     {
         twoOfaKind.crossed = true;
@@ -43,7 +99,37 @@ int main()
     {
         twoOfaKind.crossed = true;
     }
-    cout << endl << twoOfaKind.crossed << twoOfaKind.points;
+    cout << endl << twoOfaKind.crossed << twoOfaKind.points; */
+}
+
+void evaluvateRules(Player &player, int dices[])
+{
+    if(player.rules[ONES].crossed == false)
+    {
+        player.rules[ONES].points = scoreOnes(dices);
+        player.rules[ONES].crossed = true;
+    }
+    if(player.rules[TWOS].crossed == false)
+    {
+        // add a scoring system
+        player.rules[ONES].crossed = true;
+    }
+    if(player.rules[THREES].crossed == false)
+    {
+        // add a scoring system
+        player.rules[ONES].crossed = true;
+    }
+    
+}
+
+int scoreOnes(const int dices[]) {
+    int score = 0;
+    for (int i = 0; i < 5; i++) {
+        if (dices[i] == 1) {
+            score += 1;
+        }
+    }
+    return score;
 }
 
 // rolls 5 die for random value between 1 to 6.
@@ -60,6 +146,7 @@ void intDicerolling(int Dices[])
 // rerolls each die for random value between 1 to 6
 void reroll(int Dices[])
 {
+    srand(time(0));
     int requestedNumber;
     for(int i = 0; i < 5; i++)
     {
@@ -67,7 +154,7 @@ void reroll(int Dices[])
         cin >> requestedNumber;
         if(requestedNumber == 1)
         {
-        Dices[1] = requestedNumber;
+        Dices[i] = rand() % 6 + 1;
         cout << "rerolled die" << (i+1) << " to:" << Dices[i] << endl;
         }
     }
